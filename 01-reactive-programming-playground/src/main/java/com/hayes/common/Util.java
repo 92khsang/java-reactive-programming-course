@@ -1,5 +1,7 @@
 package com.hayes.common;
 
+import java.time.Duration;
+
 import com.github.javafaker.Faker;
 import org.reactivestreams.Subscriber;
 
@@ -19,4 +21,12 @@ public class Util {
 		return faker;
 	}
 
+	public static void sleepSeconds(int seconds) {
+		try {
+			Thread.sleep(Duration.ofSeconds(seconds));
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
