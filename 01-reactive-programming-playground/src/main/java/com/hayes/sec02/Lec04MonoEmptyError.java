@@ -12,6 +12,13 @@ public class Lec04MonoEmptyError {
 		getUsername(1).subscribe(Util.subscriber("User-1"));
 		getUsername(2).subscribe(Util.subscriber("User-2"));
 		getUsername(3).subscribe(Util.subscriber("User-3"));
+
+		// Drop Error
+		Mono<String> mono = getUsername(3);
+		mono.subscribe(
+				name -> System.out.println("received: " + name),
+				throwable -> System.out.println("Error: " + throwable.getMessage())
+		);
 	}
 
 	private static Mono<String> getUsername(int userId) {
