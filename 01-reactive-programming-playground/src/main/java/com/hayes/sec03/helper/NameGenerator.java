@@ -5,6 +5,7 @@ import java.util.stream.IntStream;
 
 import com.hayes.common.Util;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class NameGenerator {
 
@@ -17,6 +18,10 @@ public class NameGenerator {
 	public static Flux<String> getNamesFlux(int count) {
 		return Flux.range(1, count)
 				.map(__ -> generateName());
+	}
+
+	public static Mono<String> getNameMono() {
+		return Mono.just(generateName());
 	}
 
 	private static String generateName() {
