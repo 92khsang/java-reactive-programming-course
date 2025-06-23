@@ -16,7 +16,11 @@ import reactor.core.publisher.Mono;
 public class Lec09Timeout {
 
 	public static void main(String[] args) {
+//		singleTimeout();
+		multiTimeout();
+	}
 
+	private static void singleTimeout() {
 		getProductName(1300)
 				.timeout(Duration.ofSeconds(1)) // max 1 sec wait
 				.subscribe(Util.subscriber("Timeout"));
@@ -39,6 +43,29 @@ public class Lec09Timeout {
 		getProductName(3000)
 				.timeout(Duration.ofSeconds(1), getProductName(100))
 				.subscribe(Util.subscriber("Timeout With fallback publisher"));
+		Util.sleepSeconds(2);
+	}
+
+	private static void multiTimeout() {
+		getProductName(3000)
+				.log("Producer Timeout")
+				.timeout(Duration.ofMillis(1000)) // Producer Timeout
+				.onErrorReturn("Producer Fallback")
+				.log("My Timeout")
+				.timeout(Duration.ofMillis(200)) // My Timeout
+				.onErrorReturn("My Fallback")
+				.subscribe(Util.subscriber("MultiTimeout"));
+		Util.sleepSeconds(2);
+
+		Util.printCutoffLIne();
+		getProductName(3000)
+				.log("Producer Timeout")
+				.timeout(Duration.ofMillis(200)) // Producer Timeout
+				.onErrorReturn("Producer Fallback")
+				.log("My Timeout")
+				.timeout(Duration.ofMillis(1000)) // My Timeout
+				.onErrorReturn("My Fallback")
+				.subscribe(Util.subscriber("MultiTimeout"));
 		Util.sleepSeconds(2);
 	}
 
