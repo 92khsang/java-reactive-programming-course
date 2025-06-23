@@ -11,7 +11,8 @@ public class Lec06ErrorHandling {
 
 	public static void main(String[] args) {
 //		onErrorReturnExample();
-		onErrorResumeExample();
+//		onErrorResumeExample();
+		onErrorCompleteExample();
 	}
 
 	private static void onErrorReturnExample() {
@@ -71,6 +72,13 @@ public class Lec06ErrorHandling {
 				.onErrorResume(e -> fallbackWithError())
 				.onErrorReturn("Fail In Fallback")
 				.subscribe(Util.subscriber("Demo02"));
+	}
+
+	private static void onErrorCompleteExample() {
+		Flux.range(1, 10)
+				.map(Lec06ErrorHandling::processItem)
+				.onErrorComplete()
+				.subscribe(Util.subscriber("Demo03"));
 	}
 
 	private static int processItem(int i) {
