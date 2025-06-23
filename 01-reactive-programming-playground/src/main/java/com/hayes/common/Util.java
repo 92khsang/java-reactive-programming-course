@@ -60,4 +60,8 @@ public class Util {
 					label, end, Duration.between(start, end).toMillis());
 		}
 	}
+
+	public static void printCutoffLIne() {
+		System.out.println("============================================");
+	}
 }
