@@ -12,7 +12,8 @@ public class Lec06ErrorHandling {
 	public static void main(String[] args) {
 //		onErrorReturnExample();
 //		onErrorResumeExample();
-		onErrorCompleteExample();
+//		onErrorCompleteExample();
+		onErrorContinueExample();
 	}
 
 	private static void onErrorReturnExample() {
@@ -80,6 +81,19 @@ public class Lec06ErrorHandling {
 				.onErrorComplete()
 				.subscribe(Util.subscriber("Demo03"));
 	}
+
+	private static void onErrorContinueExample() {
+		Flux.range(1, 10)
+				.map(i -> {
+					if (i == 5) return i / 0;
+					return 100 / i;
+				})
+				.onErrorContinue((err, item) -> {
+					System.out.printf("⚠️ Skipping item %s due to: %s%n", item, err.getMessage());
+				})
+				.subscribe(Util.subscriber());
+	}
+
 
 	private static int processItem(int i) {
 		if (i == 5) {
