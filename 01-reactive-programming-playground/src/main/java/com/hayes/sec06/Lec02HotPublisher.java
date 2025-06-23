@@ -18,11 +18,15 @@ import reactor.core.publisher.Flux;
 public class Lec02HotPublisher {
 
 	public static void main(String[] args) {
-		coldPublisher();
+//		coldPublisher();
+//		Util.printCutoffLIne();
+//		hotPublisher();
+//		Util.printCutoffLIne();
+//		hotPublisherWithCancel();
+
+		refCountTwo();
 		Util.printCutoffLIne();
-		hotPublisher();
-		Util.printCutoffLIne();
-		hotPublisherWithCancel();
+		refCount();
 	}
 
 	private static void coldPublisher() {
@@ -57,6 +61,39 @@ public class Lec02HotPublisher {
 				.subscribe(Util.subscriber("Mike"));
 
 		Util.sleepSeconds(5);
+	}
+
+	private static void refCountTwo() {
+		Flux<String> movieFlux = movieStream().take(2).publish().refCount(2);
+
+		movieFlux
+				.doOnSubscribe(__ -> log.info("Sam subscribed"))
+				.subscribe(Util.subscriber("Sam"));
+		Util.sleepSeconds(1); // Sam does nothing
+
+		movieFlux
+				.doOnSubscribe(__ -> log.info("Mike subscribed"))
+				.subscribe(Util.subscriber("Mike"));
+		Util.sleepSeconds(3);
+	}
+
+	private static void refCount() {
+		Flux<String> movieFlux = movieStream().take(3).publish().refCount(1);
+
+		movieFlux
+				.take(1)
+				.doOnSubscribe(__ -> log.info("Sam is entering"))
+				.doOnTerminate(() -> log.info("Sam is leaving"))
+				.subscribe(Util.subscriber("Sam")); // watches 1 scene, then exits
+
+		Util.sleepSeconds(3);
+
+		movieFlux
+				.doOnSubscribe(__ -> log.info("Mike is entering"))
+				.doOnTerminate(() -> log.info("Mike is leaving"))
+				.subscribe(Util.subscriber("Mike")); // triggers re-subscription
+
+		Util.sleepSeconds(4);
 	}
 
 	private static Flux<String> movieStream() {
