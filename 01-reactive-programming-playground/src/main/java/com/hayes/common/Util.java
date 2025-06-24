@@ -33,6 +33,15 @@ public class Util {
 		}
 	}
 
+	public static void sleepMillis(int ms) {
+		try {
+			Thread.sleep(Duration.ofMillis(ms));
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static void measureExecutionTime(Logger log, String label, Runnable runnable) {
 		Instant start = Instant.now();
 		log.info("[{}] started at {}", label, start);
