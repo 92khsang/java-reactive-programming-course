@@ -14,7 +14,11 @@ import reactor.core.publisher.Flux;
 public class Lec11FluxFlatMap {
 
 	public static void main(String[] args) {
+//		withoutConcurrency();
+		withConcurrency(1);
+	}
 
+	private static void withoutConcurrency() {
 		Flux<User> users = UserService.getAllUsers();
 		Flux<Order> orders = users
 				.map(User::id)
@@ -24,6 +28,18 @@ public class Lec11FluxFlatMap {
 				.subscribe(Util.subscriber("Flux2Flux"));
 
 		Util.sleepSeconds(2);
+	}
+
+	private static void withConcurrency(int concurrency) {
+		Flux<User> users = UserService.getAllUsers();
+		Flux<Order> orders = users
+				.map(User::id)
+				.flatMap(OrderService::getUserOrders, concurrency);
+
+		orders
+				.subscribe(Util.subscriber("Flux2Flux"));
+
+		Util.sleepSeconds(3);
 	}
 
 }
