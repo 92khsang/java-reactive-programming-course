@@ -46,3 +46,5 @@
 **/mvnw
 **/mvnw.cmd
 **/node_modules/
+
+**/resources/sec10/*.txt
