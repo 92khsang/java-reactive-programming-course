@@ -3,11 +3,15 @@ package com.hayes.common;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import com.github.javafaker.Faker;
+import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
+import reactor.core.publisher.Flux;
 
+@Slf4j
 public class Util {
 
 	private static final Faker faker = Faker.instance();
@@ -72,5 +76,12 @@ public class Util {
 
 	public static void printCutoffLIne() {
 		System.out.println("============================================");
+	}
+
+	public static <T> UnaryOperator<Flux<T>> fluxLogger(String name) {
+		return flux -> flux
+				.doOnSubscribe(__ -> log.info("subscribing to {}", name))
+				.doOnCancel(() -> log.info("cancelling {}", name))
+				.doOnComplete(() -> log.info("{} completed", name));
 	}
 }

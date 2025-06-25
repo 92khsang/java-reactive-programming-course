@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.function.UnaryOperator;
 
+import com.hayes.common.Util;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
@@ -22,7 +23,7 @@ public class ProducerGenerator {
 
 	private static UnaryOperator<Flux<Integer>> appendCommon(int idx) {
 		return flux -> flux
-				.doOnSubscribe(__ -> log.info("subscribing to producer{}", idx))
-				.delayElements(Duration.ofMillis(10));
+				.delayElements(Duration.ofMillis(10))
+				.transform(Util.fluxLogger(String.format("producer %d", idx)));
 	}
 }
