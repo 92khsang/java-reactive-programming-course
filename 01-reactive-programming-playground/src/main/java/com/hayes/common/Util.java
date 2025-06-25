@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 public class Util {
@@ -83,6 +84,14 @@ public class Util {
 				.doOnSubscribe(__ -> log.info("[{}] subscribing", name))
 				.doOnCancel(() -> log.info("[{}] cancelling", name))
 				.doOnComplete(() -> log.info("[{}] completed", name));
+	}
+
+	public static <T> UnaryOperator<Mono<T>> monoLogger(String name) {
+		return mono -> mono
+				.doOnSubscribe(__ -> log.info("[{}] subscribing", name))
+				.doOnCancel(() -> log.info("[{}] cancelling", name))
+				.doOnSuccess(value -> log.info("[{}] completed with value: {}", name, value))
+				.doOnError(e -> log.error("[{}] error: {}", name, e.toString()));
 	}
 
 	public static <T> UnaryOperator<Flux<T>> fluxIntervalLogger(String name) {
