@@ -20,7 +20,8 @@ public class Lec05BackPressureStrategies {
 	public static void main(String[] args) {
 //		bufferStrategy();
 //		errorStrategy();
-		fixedSizeBufferStrategy();
+//		fixedSizeBufferStrategy();
+		dropStrategy();
 	}
 
 	private static void bufferStrategy() {
@@ -56,6 +57,17 @@ public class Lec05BackPressureStrategies {
 				.subscribe(Util.subscriber("FixedSizeBufferStrategy"));
 
 		Util.sleepSeconds(20);
+	}
+
+	private static void dropStrategy() {
+		Flux<Integer> producer = createFlux();
+
+		producer
+				.onBackpressureDrop()
+				.transform(appendSuffix())
+				.subscribe(Util.subscriber("DropStrategy"));
+
+		Util.sleepSeconds(10);
 	}
 
 	private static Flux<Integer> createFlux() {
