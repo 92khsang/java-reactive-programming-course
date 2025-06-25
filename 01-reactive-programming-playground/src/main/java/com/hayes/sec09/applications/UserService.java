@@ -1,5 +1,6 @@
 package com.hayes.sec09.applications;
 
+import java.util.List;
 import java.util.Map;
 
 import reactor.core.publisher.Flux;
@@ -25,6 +26,10 @@ public class UserService {
 
 	public static Mono<Integer> getUserId(String name) {
 		return Mono.fromSupplier(() -> userTable.get(name));
+	}
+
+	public static List<String> getAllUserNames() {
+		return userTable.keySet().stream().toList();
 	}
 
 }

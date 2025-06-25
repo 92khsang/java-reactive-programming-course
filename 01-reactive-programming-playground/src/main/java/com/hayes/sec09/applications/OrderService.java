@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.hayes.common.Util;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /*
     Just for demo.
@@ -31,5 +32,13 @@ public class OrderService {
 		return Flux.fromIterable(orderTable.get(userId))
 				.delayElements(Duration.ofMillis(500))
 				.transform(Util.fluxLogger("order-for-user" + userId));
+	}
+
+	public static Mono<Integer> getOrderNumbersByUserId(Integer userId) {
+		return Mono.fromSupplier(() -> orderTable.get(userId).size());
+	}
+
+	public static int getTotalOrderNumbers() {
+		return orderTable.values().stream().mapToInt(List::size).sum();
 	}
 }
