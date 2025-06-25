@@ -1,10 +1,10 @@
 package com.hayes.sec09;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
 import com.hayes.common.Util;
+import com.hayes.sec09.helper.ProducerGenerator;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
@@ -70,21 +70,15 @@ public class Lec01StartWith {
 	}
 
 	private static Flux<Integer> producer1() {
-		return Flux.just(1, 2, 3)
-				.doOnSubscribe(__ -> log.info("subscribing to producer1"))
-				.delayElements(Duration.ofMillis(10));
+		return ProducerGenerator.generate(1, List.of(1, 2, 3));
 	}
 
 	private static Flux<Integer> producer2() {
-		return Flux.just(4, 5, 6)
-				.doOnSubscribe(__ -> log.info("subscribing to producer2"))
-				.delayElements(Duration.ofMillis(10));
+		return ProducerGenerator.generate(2, List.of(2, 3, 4));
 	}
 
 	private static Flux<Integer> producer3() {
-		return Flux.just(51, 52, 53)
-				.doOnSubscribe(__ -> log.info("subscribing to producer3"))
-				.delayElements(Duration.ofMillis(10));
+		return ProducerGenerator.generate(3, List.of(51, 52, 53));
 	}
 
 }
