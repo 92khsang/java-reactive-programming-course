@@ -5,6 +5,7 @@ import java.util.function.UnaryOperator;
 import com.hayes.common.Util;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
 
 /*
@@ -26,7 +27,7 @@ public class Lec05BackPressureStrategies {
 	}
 
 	private static void bufferStrategy() {
-		Flux<Integer> producer = createFlux();
+		Flux<Integer> producer = createFlux(FluxSink.OverflowStrategy.BUFFER);
 
 		producer
 				.onBackpressureBuffer()
@@ -37,7 +38,7 @@ public class Lec05BackPressureStrategies {
 	}
 
 	private static void errorStrategy() {
-		Flux<Integer> producer = createFlux();
+		Flux<Integer> producer = createFlux(FluxSink.OverflowStrategy.ERROR);
 
 		producer
 				.log("Tag 1")
@@ -61,7 +62,7 @@ public class Lec05BackPressureStrategies {
 	}
 
 	private static void dropStrategy() {
-		Flux<Integer> producer = createFlux();
+		Flux<Integer> producer = createFlux(FluxSink.OverflowStrategy.DROP);
 
 		producer
 				.onBackpressureDrop()
@@ -72,7 +73,7 @@ public class Lec05BackPressureStrategies {
 	}
 
 	private static void latestStrategy() {
-		Flux<Integer> producer = createFlux();
+		Flux<Integer> producer = createFlux(FluxSink.OverflowStrategy.LATEST);
 
 		producer
 				.onBackpressureLatest()
@@ -82,7 +83,7 @@ public class Lec05BackPressureStrategies {
 		Util.sleepSeconds(10);
 	}
 
-		private static Flux<Integer> createFlux() {
+	private static Flux<Integer> createFlux() {
 		return Flux.create(sink -> {
 					for (int i = 1; i <= 100 && !sink.isCancelled(); i++) {
 						log.info("Generating {}", i);
@@ -91,6 +92,19 @@ public class Lec05BackPressureStrategies {
 					}
 					sink.complete();
 				})
+				.cast(Integer.class)
+				.subscribeOn(Schedulers.parallel());
+	}
+
+	private static Flux<Integer> createFlux(FluxSink.OverflowStrategy strategy) {
+		return Flux.create(sink -> {
+					for (int i = 1; i <= 100 && !sink.isCancelled(); i++) {
+						log.info("Generating {}", i);
+						sink.next(i);
+						Util.sleepMillis(20);
+					}
+					sink.complete();
+				}, strategy)
 				.cast(Integer.class)
 				.subscribeOn(Schedulers.parallel());
 	}
