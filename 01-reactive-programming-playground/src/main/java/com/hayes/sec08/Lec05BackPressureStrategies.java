@@ -21,7 +21,8 @@ public class Lec05BackPressureStrategies {
 //		bufferStrategy();
 //		errorStrategy();
 //		fixedSizeBufferStrategy();
-		dropStrategy();
+//		dropStrategy();
+		latestStrategy();
 	}
 
 	private static void bufferStrategy() {
@@ -70,7 +71,18 @@ public class Lec05BackPressureStrategies {
 		Util.sleepSeconds(10);
 	}
 
-	private static Flux<Integer> createFlux() {
+	private static void latestStrategy() {
+		Flux<Integer> producer = createFlux();
+
+		producer
+				.onBackpressureLatest()
+				.transform(appendSuffix())
+				.subscribe(Util.subscriber("LatestStrategy"));
+
+		Util.sleepSeconds(10);
+	}
+
+		private static Flux<Integer> createFlux() {
 		return Flux.create(sink -> {
 					for (int i = 1; i <= 100 && !sink.isCancelled(); i++) {
 						log.info("Generating {}", i);
@@ -92,6 +104,7 @@ public class Lec05BackPressureStrategies {
 
 
 	private static int timeConsumingTask(int i) {
+		log.info("TimeConsumingTask {}", i);
 		Util.sleepSeconds(1);
 		return i;
 	}
