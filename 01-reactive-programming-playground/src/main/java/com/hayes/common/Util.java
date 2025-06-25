@@ -80,8 +80,23 @@ public class Util {
 
 	public static <T> UnaryOperator<Flux<T>> fluxLogger(String name) {
 		return flux -> flux
-				.doOnSubscribe(__ -> log.info("subscribing to {}", name))
-				.doOnCancel(() -> log.info("cancelling {}", name))
-				.doOnComplete(() -> log.info("{} completed", name));
+				.doOnSubscribe(__ -> log.info("[{}] subscribing", name))
+				.doOnCancel(() -> log.info("[{}] cancelling", name))
+				.doOnComplete(() -> log.info("[{}] completed", name));
+	}
+
+	public static <T> UnaryOperator<Flux<T>> fluxIntervalLogger(String name) {
+		return flux -> {
+			final long[] lastTimestamp = {System.currentTimeMillis()};
+
+			return flux
+					.doOnNext(item -> {
+						long now = System.currentTimeMillis();
+						long interval = now - lastTimestamp[0];
+						log.info("[{}] Emitted: {} (interval since last: {} ms)", name, item, interval);
+						lastTimestamp[0] = now;
+					})
+					.transform(Util.fluxLogger(name));
+		};
 	}
 }
