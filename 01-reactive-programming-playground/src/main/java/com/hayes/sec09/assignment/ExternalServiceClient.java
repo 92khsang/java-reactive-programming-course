@@ -18,18 +18,21 @@ public class ExternalServiceClient extends AbstractHttpClient {
 
 	private Mono<String> name(Integer id) {
 		return this.get(BASE_URI.concat("/product/%d"), id)
+				.responseContent()
 				.asString()
 				.next();
 	}
 
 	private Mono<String> price(Integer id) {
 		return this.get(BASE_URI.concat("/price/%d"), id)
+				.responseContent()
 				.asString()
 				.next();
 	}
 
 	private Mono<String> review(Integer id) {
 		return this.get(BASE_URI.concat("/review/%d"), id)
+				.responseContent()
 				.asString()
 				.next();
 	}

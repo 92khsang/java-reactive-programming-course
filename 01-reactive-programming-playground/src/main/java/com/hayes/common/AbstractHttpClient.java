@@ -23,7 +23,7 @@ public abstract class AbstractHttpClient {
 				.baseUrl(BASE_URL);
 	}
 
-	protected ByteBufFlux get(String pathTemplate, Object pathId, Map<String, Object> params) {
+	protected HttpClient.ResponseReceiver<?> get(String pathTemplate, Object pathId, Map<String, Object> params) {
 		String fullUri = String.format(pathTemplate, pathId);
 
 		if (Objects.nonNull(params) && !params.isEmpty()) {
@@ -32,19 +32,18 @@ public abstract class AbstractHttpClient {
 
 		return this.httpClient
 				.get()
-				.uri(fullUri)
-				.responseContent();
+				.uri(fullUri);
 	}
 
-	protected ByteBufFlux get(String fullUri, Map<String, Object> params) {
+	protected HttpClient.ResponseReceiver<?> get(String fullUri, Map<String, Object> params) {
 		return get(fullUri, null, params);
 	}
 
-	protected ByteBufFlux get(String pathTemplate, Object pathId) {
+	protected HttpClient.ResponseReceiver<?> get(String pathTemplate, Object pathId) {
 		return get(pathTemplate, pathId, null);
 	}
 
-	protected ByteBufFlux get(String fullUri) {
+	protected HttpClient.ResponseReceiver<?> get(String fullUri) {
 		return get(fullUri, null, null);
 	}
 
