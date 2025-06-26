@@ -19,7 +19,7 @@ public class UserService {
 				.filter(USER_CATEGORY_MAP::containsKey)
 				.map(USER_CATEGORY_MAP::get)
 				.map(category -> context.put("category", category))
-				.orElse(context);
+				.orElse(Context.empty());
 	}
 
 }
