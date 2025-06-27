@@ -59,4 +59,10 @@ public class Lec04RangeTest {
 				.verifyComplete();
 	}
 
+	@Test
+	public void thenConsumeWhileTest() {
+		StepVerifier.create(getRandomItems())
+				.thenConsumeWhile(i -> i > 0 && i <= 100)
+				.verifyComplete();
+	}
 }
